@@ -9,25 +9,3 @@ export default {
   SET_ACTIVE_MODEL_ENDPOINT: `${API_URL}/set-active-model`,
 };
 
-// Then in your components, import and use this config
-// Example:
-/*
-import config from '../config';
-
-async function predictChurn(customerData) {
-  try {
-    const response = await fetch(config.PREDICT_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(customerData),
-    });
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error predicting churn:', error);
-    throw error;
-  }
-}
-*/

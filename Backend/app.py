@@ -46,7 +46,7 @@ if not os.path.exists(ACTIVE_MODEL_PATH):
         f.write('original')  # Default to the original model
         
 # --- Load the trained pipeline and components ---
-model = pickle.load(open("model_pipeline.sav", "rb"))
+model = joblib.load(open("model_pipeline.sav", "rb"))
 model_shap = model.named_steps['classifier']
 preprocessor = model.named_steps['preprocessor']
 explainer = shap.TreeExplainer(model_shap)
