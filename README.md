@@ -82,7 +82,7 @@ Built using **React**, **Flask**, and **Scikit-learn**, this app enables real-ti
 
 
 
-###- Knowledge Hub interface  
+- Knowledge Hub interface  
   ![image](https://github.com/user-attachments/assets/d2ead0e0-b0af-4952-8626-1ffcc20c7aa9)
 
   ![image](https://github.com/user-attachments/assets/9694e7f9-22dd-457e-8d1d-7465f79f8a77)
