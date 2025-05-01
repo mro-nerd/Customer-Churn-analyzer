@@ -1,4 +1,4 @@
-// components/PredictionResults.jsx
+import { Pointer } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -24,7 +24,7 @@ function PredictionResults() {
   const handleNewPrediction = () => {
     // Clear stored prediction and navigate back to form
     localStorage.removeItem("predictionResults");
-    navigate("/");
+    navigate("/single-predict");
   };
 
   // Prepare all insights data for visualization
@@ -285,7 +285,8 @@ function PredictionResults() {
         </div>
         
         <div className="results-actions">
-          <button onClick={handleNewPrediction} className="new-prediction-btn">
+          <button style={{ display: 'flex', gap: '15px', marginTop: '25px', backgroundColor: '#3498db', color: 'white', border: '1px solid #ddd', padding: '12px 20px',cursor:'pointer' }} 
+onClick={handleNewPrediction} className="new-prediction-btn">
             Make New Prediction
           </button>
         </div>

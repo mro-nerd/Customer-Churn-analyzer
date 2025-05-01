@@ -5,7 +5,6 @@ import PredictionResults from "./components/PredictionResults";
 import BatchPredictionForm from "./components/BatchPredictionForm";
 import ModelManagement from "./components/ModelManagement";
 import Header from "./components/Header";
-import Footer from "./components/Footer";
 import Home from "./components/Home";
 import "./App.css";
 
@@ -16,7 +15,7 @@ function App() {
         <Header />
         <div className="content-wrapper">
           <Routes>
-            {/* Home route to select prediction type */}
+            {/* Home route*/}
             <Route path="/" element={<Home />} />
             
             {/* Single prediction route */}
@@ -25,7 +24,7 @@ function App() {
             {/* Batch prediction route */}
             <Route path="/batch-predict" element={<BatchPredictionForm />} />
             
-            {/* New model management route */}
+            {/* model management route */}
             <Route path="/model-management" element={<ModelManagement />} />
             
             {/* Results route */}
@@ -35,7 +34,7 @@ function App() {
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </div>
-        {/* <Footer /> */}
+      
       </div>
     </Router>
   );

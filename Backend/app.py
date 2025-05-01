@@ -388,7 +388,7 @@ def train_model(dataset_path, model_save_path=None):
             ]
         )
         
-        # Build the Pipeline - use SMOTEENN if imbalanced
+        # Build the Pipeline
         if is_balanced:
             model_pipeline = Pipeline(steps=[
                 ('preprocessor', preprocessor),
@@ -511,7 +511,7 @@ def retrain_model():
         # Evaluate original model on its original dataset split
         try:
             # Load the original full dataset
-            df_orig = pd.read_csv("C:/coading/.vscode/minor-project/Backend/tel_churn.csv")  # <- Make sure this file exists
+            df_orig = pd.read_csv("C:/coading/.vscode/minor-project/Backend/tel_churn.csv")
             
             if 'customerID' in df_orig.columns:
                 df_orig = df_orig.drop('customerID', axis=1)
@@ -562,7 +562,7 @@ def set_active_model():
     
     model_choice = data['model']
     
-    # If selecting retrained model, make sure it exists
+    
     if model_choice == 'retrained':
         retrained_path = os.path.join(MODEL_FOLDER, 'retrained_model.joblib')
         if not os.path.exists(retrained_path):

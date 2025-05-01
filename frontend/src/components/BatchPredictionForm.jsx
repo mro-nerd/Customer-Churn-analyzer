@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-//import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const BatchPredictionForm = () => {
@@ -41,7 +40,7 @@ const BatchPredictionForm = () => {
         'http://localhost:5000/batch-predict',
         formData,
         {
-          responseType: 'blob', // Important for receiving files
+          responseType: 'blob',
           headers: {
             'Content-Type': 'multipart/form-data'
           }
