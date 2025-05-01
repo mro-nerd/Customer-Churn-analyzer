@@ -45,9 +45,9 @@ Built using **React**, **Flask**, and **Scikit-learn**, this app enables real-ti
 
 ## 📸 Preview
 
-Add screenshots or GIFs here to showcase the app:
 
-- Single prediction with insights  
+
+###- Single prediction with insights  
   ![image](https://github.com/user-attachments/assets/4a3e6b0c-109a-4080-8acf-8ea737d2eac0)
 
   ![image](https://github.com/user-attachments/assets/a14ba4ce-b9b3-400b-bb57-f46e4cec0ac5)
@@ -57,7 +57,7 @@ Add screenshots or GIFs here to showcase the app:
 
 
 
-- Batch prediction result
+###- Batch prediction result
   ![Screenshot 2025-04-30 221323](https://github.com/user-attachments/assets/131f1ae6-37ec-4992-98a2-354569a461db)
   
   ![image](https://github.com/user-attachments/assets/f324dc43-be54-4fce-80e1-992739168534)
@@ -69,7 +69,7 @@ Add screenshots or GIFs here to showcase the app:
 
 
 
-- Model training & comparison  
+###- Model training & comparison  
   ![image](https://github.com/user-attachments/assets/5e7d5db1-670f-4406-b301-3184c098e706)
 
   ![image](https://github.com/user-attachments/assets/19d913b7-b2ae-4e99-b7a7-859e7622cc0f)
@@ -85,7 +85,7 @@ Add screenshots or GIFs here to showcase the app:
 
 
 
-- Knowledge Hub interface  
+###- Knowledge Hub interface  
   ![image](https://github.com/user-attachments/assets/d2ead0e0-b0af-4952-8626-1ffcc20c7aa9)
 
   ![image](https://github.com/user-attachments/assets/9694e7f9-22dd-457e-8d1d-7465f79f8a77)
