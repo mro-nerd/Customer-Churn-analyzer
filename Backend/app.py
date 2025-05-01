@@ -8,6 +8,7 @@ import io
 import os
 import joblib
 import time
+from pathlib import Path
 from werkzeug.utils import secure_filename
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
@@ -21,25 +22,29 @@ app = Flask(__name__)
 CORS(app)  # Enable CORS for all domains
 
 # Set up file upload config
-UPLOAD_FOLDER = 'uploads'
+BASE_DIR = Path(__file__).resolve().parent
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
+MODEL_FOLDER = os.path.join(BASE_DIR, 'models')
+
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload
-
-# Set up model storage
-MODEL_FOLDER = 'models'
 if not os.path.exists(MODEL_FOLDER):
     os.makedirs(MODEL_FOLDER)
 
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload
+
 # Path for storing the active model choice
 ACTIVE_MODEL_PATH = os.path.join(MODEL_FOLDER, 'active_model.txt')
+
+# Default model path
+DEFAULT_MODEL_PATH = os.path.join(BASE_DIR, 'model_pipeline.sav')
 
 # Ensure we have a default active model
 if not os.path.exists(ACTIVE_MODEL_PATH):
     with open(ACTIVE_MODEL_PATH, 'w') as f:
         f.write('original')  # Default to the original model
-
+        
 # --- Load the trained pipeline and components ---
 model = pickle.load(open("model_pipeline.sav", "rb"))
 model_shap = model.named_steps['classifier']
@@ -47,7 +52,8 @@ preprocessor = model.named_steps['preprocessor']
 explainer = shap.TreeExplainer(model_shap)
 
 # --- Precompute simple churn-rate EDA for categorical flags ---
-df = pd.read_csv("churn.csv").drop('customerID', axis=1)
+CHURN_CSV_PATH = os.path.join(BASE_DIR, "churn.csv")
+df = pd.read_csv(CHURN_CSV_PATH).drop('customerID', axis=1)
 overall_churn = df['Churn'].mean()
 cat_cols = [
     'gender', 'Partner', 'Dependents', 'PhoneService', 'MultipleLines',
@@ -511,7 +517,8 @@ def retrain_model():
         # Evaluate original model on its original dataset split
         try:
             # Load the original full dataset
-            df_orig = pd.read_csv("C:/coading/.vscode/minor-project/Backend/tel_churn.csv")
+            OG_CSV_PATH = os.path.join(BASE_DIR, "tel_churn.csv")
+            df_orig = pd.read_csv(OG_CSV_PATH)
             
             if 'customerID' in df_orig.columns:
                 df_orig = df_orig.drop('customerID', axis=1)
@@ -612,4 +619,5 @@ def get_active_model():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)

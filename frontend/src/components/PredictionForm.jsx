@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import config from "../config";
 
 function PredictionForm() {
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ function PredictionForm() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:5000/predict", formData);
+      const res = await axios.post(config.PREDICT_ENDPOINT, formData);
       // Store prediction data in localStorage to pass between routes
       localStorage.setItem("predictionResults", JSON.stringify(res.data));
       // Navigate to results page

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import config from "../config";
+//import config from '../config'
 
 const ModelManagement = () => {
   const navigate = useNavigate();
@@ -17,7 +19,7 @@ const ModelManagement = () => {
 
   const fetchActiveModel = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/get-active-model");
+      const response = await axios.get(config.GET_ACTIVE_MODEL_ENDPOINT);
       const data = response.data;
 
       if (data.success) {
@@ -53,7 +55,7 @@ const ModelManagement = () => {
     formData.append("file", file);
 
     try {
-      const response = await axios.post("http://localhost:5000/retrain-model", formData, {
+      const response = await axios.post(config.RETRAIN_MODEL_ENDPOINT, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -78,7 +80,7 @@ const ModelManagement = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/set-active-model", { model: modelType });
+      const response = await axios.post(config.SET_ACTIVE_MODEL_ENDPOINT, { model: modelType });
 
       const data = response.data;
 

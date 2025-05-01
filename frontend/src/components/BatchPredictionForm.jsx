@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import config from '../config'
 
 const BatchPredictionForm = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -37,7 +38,7 @@ const BatchPredictionForm = () => {
       formData.append('file', selectedFile);
 
       const response = await axios.post(
-        'http://localhost:5000/batch-predict',
+        config.BATCH_PREDICT_ENDPOINT,
         formData,
         {
           responseType: 'blob',
