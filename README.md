@@ -45,6 +45,7 @@ Built using **React**, **Flask**, and **Scikit-learn**, this app enables real-ti
 
 ## 📸 Preview
 
+Live demo Link- https://customer-churn-analyzer-r19l.onrender.com
 
 - Single prediction with insights  
   ![image](https://github.com/user-attachments/assets/4a3e6b0c-109a-4080-8acf-8ea737d2eac0)
