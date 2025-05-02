@@ -19,7 +19,7 @@ from imblearn.pipeline import Pipeline
 from imblearn.combine import SMOTEENN
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all domains
+CORS(app,origins=["https://customer-churn-analyzer-r19l.onrender.com"])  # Enable CORS for all domains
 
 # Set up file upload config
 BASE_DIR = Path(__file__).resolve().parent
