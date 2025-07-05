@@ -7,5 +7,10 @@ export default {
   RETRAIN_MODEL_ENDPOINT: `${API_URL}/retrain-model`,
   GET_ACTIVE_MODEL_ENDPOINT: `${API_URL}/get-active-model`,
   SET_ACTIVE_MODEL_ENDPOINT: `${API_URL}/set-active-model`,
+  // Authentication endpoints
+  LOGIN_ENDPOINT: `${API_URL}/auth/login`,
+  REGISTER_ENDPOINT: `${API_URL}/auth/register`,
+  PROFILE_ENDPOINT: `${API_URL}/auth/profile`,
+  VERIFY_TOKEN_ENDPOINT: `${API_URL}/auth/verify-token`,
 };
 

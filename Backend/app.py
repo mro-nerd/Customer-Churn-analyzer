@@ -1,5 +1,9 @@
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from flask_bcrypt import Bcrypt
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime, timedelta
 import pickle
 import pandas as pd
 import shap
@@ -20,6 +24,143 @@ from imblearn.combine import SMOTEENN
 
 app = Flask(__name__)
 CORS(app,origins=["https://customer-churn-analyzer-r19l.onrender.com"])  # Enable CORS for all domains
+
+# Authentication configuration
+app.config['JWT_SECRET_KEY'] = 'your-secret-key-change-this-in-production'
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Initialize extensions
+jwt = JWTManager(app)
+bcrypt = Bcrypt(app)
+db = SQLAlchemy(app)
+
+# User model
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def set_password(self, password):
+        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+    
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self.password_hash, password)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'created_at': self.created_at.isoformat()
+        }
+
+# Create database tables
+with app.app_context():
+    db.create_all()
+
+# Authentication routes
+@app.route('/auth/register', methods=['POST'])
+def register():
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        if not data.get('username') or not data.get('email') or not data.get('password'):
+            return jsonify({'error': 'Username, email, and password are required'}), 400
+        
+        # Check if user already exists
+        if User.query.filter_by(username=data['username']).first():
+            return jsonify({'error': 'Username already exists'}), 400
+        
+        if User.query.filter_by(email=data['email']).first():
+            return jsonify({'error': 'Email already exists'}), 400
+        
+        # Create new user
+        user = User(
+            username=data['username'],
+            email=data['email']
+        )
+        user.set_password(data['password'])
+        
+        db.session.add(user)
+        db.session.commit()
+        
+        # Create access token
+        access_token = create_access_token(identity=user.id)
+        
+        return jsonify({
+            'message': 'User created successfully',
+            'access_token': access_token,
+            'user': user.to_dict()
+        }), 201
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/auth/login', methods=['POST'])
+def login():
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        if not data.get('username') or not data.get('password'):
+            return jsonify({'error': 'Username and password are required'}), 400
+        
+        # Find user
+        user = User.query.filter_by(username=data['username']).first()
+        
+        if not user or not user.check_password(data['password']):
+            return jsonify({'error': 'Invalid username or password'}), 401
+        
+        # Create access token
+        access_token = create_access_token(identity=user.id)
+        
+        return jsonify({
+            'message': 'Login successful',
+            'access_token': access_token,
+            'user': user.to_dict()
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/auth/profile', methods=['GET'])
+@jwt_required()
+def get_profile():
+    try:
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        
+        return jsonify({'user': user.to_dict()}), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/auth/verify-token', methods=['GET'])
+@jwt_required()
+def verify_token():
+    try:
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        
+        return jsonify({
+            'valid': True,
+            'user': user.to_dict()
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 # Set up file upload config
 BASE_DIR = Path(__file__).resolve().parent
@@ -239,6 +380,7 @@ def process_customer_data(input_df):
     return results
 
 @app.route('/predict', methods=['POST'])
+@jwt_required()
 def predict():
     data = request.get_json(force=True)
     
@@ -264,6 +406,7 @@ def predict():
     return jsonify(result)
 
 @app.route('/batch-predict', methods=['POST'])
+@jwt_required()
 def batch_predict():
     # Check if a file was uploaded
     if 'file' not in request.files:
@@ -462,6 +605,7 @@ def train_model(dataset_path, model_save_path=None):
         }
 
 @app.route('/retrain-model', methods=['POST'])
+@jwt_required()
 def retrain_model():
     if 'file' not in request.files:
         return jsonify({'success': False, 'error': 'No file part'}), 400
@@ -561,6 +705,7 @@ def retrain_model():
 
 
 @app.route('/set-active-model', methods=['POST'])
+@jwt_required()
 def set_active_model():
     data = request.get_json(force=True)
     
@@ -588,6 +733,7 @@ def set_active_model():
     return jsonify({'success': True, 'active_model': model_choice})
 
 @app.route('/get-active-model', methods=['GET'])
+@jwt_required()
 def get_active_model():
     try:
         with open(ACTIVE_MODEL_PATH, 'r') as f:
